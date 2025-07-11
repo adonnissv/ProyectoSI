@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprendizaje por Refuerzo (RL)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        .section-container { transition: all 0.5s ease-in-out; }
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s; transform-style: preserve-3d; }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; border-radius: 0.75rem;
+        }
+        .flip-card-back { transform: rotateY(180deg); }
+        .maze-cell {
+            width: 60px; height: 60px; /* Celdas más grandes */
+            border: 1px solid #374151; /* gray-700 */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 1.5rem;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+        .cell-value { font-size: 1rem; font-weight: bold; color: white; }
+        .cell-policy { font-size: 2rem; position: absolute; opacity: 0.75; }
+        pre { background-color: #1e293b; color: #e2e8f0; padding: 1.5rem; border-radius: 0.75rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; }
+        .token-keyword { color: #f472b6; } .token-function { color: #60a5fa; } .token-string { color: #a3e635; } .token-comment { color: #6b7280; } .token-number { color: #facc15; }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-300 font-sans" x-data="rlApp()">
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section class="min-h-[80vh] flex flex-col justify-center text-center">
+            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400 mb-6">Aprendizaje por Refuerzo</h1>
+            <p class="text-xl text-slate-400 mb-12 max-w-3xl mx-auto">Descubre cómo las máquinas aprenden a tomar decisiones a través de la prueba y el error, buscando siempre la máxima recompensa.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-purple-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><h3 class="text-2xl font-bold text-white">Agente</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-purple-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Agente</h3><p class="text-purple-100">Es quien aprende y toma decisiones. Piensa en él como el jugador o el robot que explora el mundo.</p></div></div></div>
+                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-sky-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.881 4.002l.028.028a2 2 0 01-2.828 2.828l-.028-.028a2 2 0 012.828-2.828zM12 18a2 2 0 100-4 2 2 0 000 4z" /></svg><h3 class="text-2xl font-bold text-white">Entorno</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-sky-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Entorno</h3><p class="text-sky-100">Es el "mundo" con el que el agente interactúa. Contiene los estados, las reglas y los desafíos.</p></div></div></div>
+                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-amber-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-amber-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m12-3a9 9 0 11-18 0 9 9 0 0118 0zM12 8v4l3 3" /></svg><h3 class="text-2xl font-bold text-white">Recompensa</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-amber-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Recompensa</h3><p class="text-amber-100">Una señal (positiva o negativa) que el entorno le da al agente. Es el feedback que le indica si una acción fue buena o mala.</p></div></div></div>
+                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 3l6-3" /></svg><h3 class="text-2xl font-bold text-white">Política</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-emerald-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Política</h3><p class="text-emerald-100">La estrategia o "cerebro" del agente. Es un mapa que le dice cuál es la mejor acción a tomar en cada estado.</p></div></div></div>
+            </div>
+        </section>
+
+        <section class="text-center py-16">
+            <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+                <button @click="showSection('visualization')" class="flex items-center gap-3 bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">¡Visualizar un entorno!</button>
+                <button @click="showSection('code')" class="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">¡Fragmento de código!</button>
+            </div>
+        </section>
+        
+        <div x-show="visibleSection === 'visualization'" x-transition class="section-container">
+            <section class="py-12">
+                <h2 class="text-4xl font-bold mb-4 text-center">Visualizando el Valor y la Política</h2>
+                <p class="text-slate-400 mb-8 text-center max-w-3xl mx-auto" x-text="stepDescription()"></p>
+                
+                <div class="grid md:grid-cols-3 gap-8 items-start">
+                    <div class="md:col-span-1 bg-slate-800 p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-4">Proceso de Aprendizaje</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-lg" :class="step === 0 ? 'bg-purple-500/30 border-purple-400 border' : 'opacity-50'">
+                                <h4 class="font-bold text-white">Paso 1: Calcular Valores</h4>
+                                <p class="text-sm text-slate-300">Descubre qué tan "valiosa" es cada casilla en función de su cercanía a la recompensa (⭐) o al peligro (🔥).</p>
+                            </div>
+                             <div class="p-4 rounded-lg" :class="step === 1 ? 'bg-purple-500/30 border-purple-400 border' : 'opacity-50'">
+                                <h4 class="font-bold text-white">Paso 2: Encontrar la Política</h4>
+                                <p class="text-sm text-slate-300">Una vez conocidos los valores, se determina la mejor ruta (política →), moviéndose siempre hacia la casilla de mayor valor.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button @click="nextStep()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg text-lg" x-text="buttonText()"></button>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-lg flex justify-center">
+                        <div class="grid grid-cols-5 gap-0">
+                            <template x-for="(row, y) in maze" :key="y">
+                                <template x-for="(cell, x) in row" :key="x">
+                                    <div class="maze-cell" :style="getCellStyle(valueGrid[y][x])">
+                                        <span x-show="cell === 1">🧱</span>
+                                        <span x-show="cell === 10">⭐</span>
+                                        <span x-show="cell === -10">🔥</span>
+                                        <div x-show="step > 0 && cell === 0" class="cell-value" x-text="valueGrid[y][x].toFixed(1)"></div>
+                                        <div x-show="step === 2 && cell === 0" class="cell-policy" x-text="policyGrid[y][x]"></div>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div x-show="visibleSection === 'code'" x-transition class="section-container">
+             <section class="py-12">
+                <h2 class="text-4xl font-bold mb-4 text-center">Ejemplo de Código en Python</h2>
+                <p class="text-slate-400 mb-8 text-center max-w-3xl mx-auto">
+                    Este es un ejemplo simplificado de Q-Learning usando la biblioteca <span class="font-bold text-white">Gymnasium</span> para resolver el entorno clásico "FrozenLake".
+                </p>
+                <pre><code class="language-python"><span class="token-keyword">import</span> gymnasium <span class="token-keyword">as</span> gym
+<span class="token-keyword">import</span> numpy <span class="token-keyword">as</span> np
+
+<span class="token-comment"># 1. Crear el entorno</span>
+<span class="token-comment"># 'FrozenLake-v1' es un mundo de rejilla donde el agente debe ir del inicio (S) a la meta (G)</span>
+<span class="token-comment"># sin caer en los agujeros (H). `is_slippery=False` lo hace determinista.</span>
+env = gym.<span class="token-function">make</span>(<span class="token-string">'FrozenLake-v1'</span>, is_slippery=<span class="token-keyword">False</span>)
+
+<span class="token-comment"># 2. Inicializar la Q-Table con ceros</span>
+<span class="token-comment"># Una tabla para almacenar los "valores" de cada par (estado, acción).</span>
+<span class="token-comment"># Filas: número de estados (casillas). Columnas: número de acciones (izquierda, abajo, derecha, arriba).</span>
+q_table = np.zeros([env.observation_space.n, env.action_space.n])
+
+<span class="token-comment"># 3. Definir los hiperparámetros</span>
+alpha = <span class="token-number">0.1</span>      <span class="token-comment"># Tasa de aprendizaje: qué tanto actualizamos los valores Q.</span>
+gamma = <span class="token-number">0.9</span>      <span class="token-comment"># Factor de descuento: importancia de las recompensas futuras.</span>
+epsilon = <span class="token-number">1.0</span>    <span class="token-comment"># Tasa de exploración: probabilidad de tomar una acción aleatoria.</span>
+num_episodes = <span class="token-number">10000</span> <span class="token-comment"># Número de veces que el agente jugará el juego para aprender.</span>
+
+<span class="token-comment"># 4. Bucle de entrenamiento</span>
+<span class="token-keyword">for</span> i <span class="token-keyword">in</span> <span class="token-function">range</span>(num_episodes):
+    <span class="token-comment"># Reiniciar el entorno para un nuevo episodio</span>
+    state, info = env.<span class="token-function">reset</span>()
+    done = <span class="token-keyword">False</span>
+    
+    <span class="token-keyword">while not</span> done:
+        <span class="token-comment"># Decidir si explorar o explotar</span>
+        <span class="token-keyword">if</span> np.random.uniform(<span class="token-number">0</span>, <span class="token-number">1</span>) < epsilon:
+            action = env.action_space.<span class="token-function">sample</span>() <span class="token-comment"># Explorar: tomar acción aleatoria.</span>
+        <span class="token-keyword">else</span>:
+            action = np.<span class="token-function">argmax</span>(q_table[state]) <span class="token-comment"># Explotar: tomar la mejor acción conocida.</span>
+
+        <span class="token-comment"># Realizar la acción y observar el resultado</span>
+        next_state, reward, terminated, truncated, info = env.<span class="token-function">step</span>(action)
+        done = terminated <span class="token-keyword">or</span> truncated
+
+        <span class="token-comment"># 5. Actualizar la Q-Table usando la ecuación de Bellman</span>
+        <span class="token-comment"># Esta es la fórmula del aprendizaje.</span>
+        old_value = q_table[state, action]
+        next_max = np.<span class="token-function">max</span>(q_table[next_state])
+        
+        <span class="token-comment"># El nuevo valor Q es una mezcla del valor antiguo y el valor aprendido.</span>
+        new_value = old_value + alpha * (reward + gamma * next_max - old_value)
+        q_table[state, action] = new_value
+        
+        state = next_state
+
+<span class="token-function">print</span>(<span class="token-string">"¡Entrenamiento finalizado!"</span>)
+<span class="token-function">print</span>(<span class="token-string">"\nQ-Table resultante:"</span>)
+<span class="token-function">print</span>(q_table)
+
+env.<span class="token-function">close</span>()</code></pre>
+            </section>
+        </div>
+    </div>
+    
+    <footer class="bg-slate-900/50 border-t border-slate-800 mt-20 py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold text-white mb-6">Explora otras áreas</h3>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="arbolesdecision.html" class="w-full sm:w-auto inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">¡Volver a los Árboles!</a>
+                <a href="conclusiones.html" class="w-full sm:w-auto inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Conclusiones y Comparativa</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function rlApp() {
+            return {
+                visibleSection: null,
+                step: 0, // 0: Inicio, 1: Valores calculados, 2: Política mostrada
+                maze: [],
+                valueGrid: [],
+                policyGrid: [],
+                
+                init() {
+                    this.initializeMaze();
+                },
+
+                showSection(section) {
+                    this.visibleSection = section;
+                },
+
+                initializeMaze() {
+                    this.step = 0;
+                    this.maze = [
+                        [0, 0, 0, 0, 10],   // 0: Camino, 1: Muro, 10: Recompensa
+                        [0, 1, 0, 1, 0],
+                        [0, 1, 0, 0, 0],
+                        [0, 0, 1, -10, 1], // -10: Peligro
+                        [0, 0, 0, 0, 0]
+                    ];
+                    this.valueGrid = this.maze.map(row => row.slice()); // Copia inicial de valores
+                    this.policyGrid = Array(5).fill().map(() => Array(5).fill(''));
+                },
+                
+                buttonText() {
+                    if (this.step === 0) return 'Paso 1: Calcular Valores';
+                    if (this.step === 1) return 'Paso 2: Encontrar la Política';
+                    return 'Reiniciar';
+                },
+                stepDescription() {
+                    if (this.step === 0) return 'El agente no sabe nada. Cada casilla vale lo que contiene (0, 10, o -10). Haz clic en "Calcular Valores" para que el agente explore y aprenda el valor real de cada posición.';
+                    if (this.step === 1) return '¡Valores calculados! El agente ahora sabe qué tan buena es cada casilla (verde = bueno, rojo = malo). Ahora, haz clic en "Encontrar la Política" para ver la mejor ruta.';
+                    return '¡Política encontrada! Las flechas muestran el camino óptimo hacia la recompensa. Esta es la "solución" que el agente ha aprendido.';
+                },
+
+                nextStep() {
+                    if (this.step === 0) {
+                        this.calculateValues();
+                        this.step = 1;
+                    } else if (this.step === 1) {
+                        this.calculatePolicy();
+                        this.step = 2;
+                    } else {
+                        this.initializeMaze();
+                    }
+                },
+
+                async calculateValues() {
+                    const discount = 0.9; 
+                    for (let i = 0; i < 20; i++) { 
+                        let newGrid = this.valueGrid.map(row => row.slice());
+                        for (let y = 0; y < 5; y++) {
+                            for (let x = 0; x < 5; x++) {
+                                if (this.maze[y][x] !== 0) continue; 
+                                let maxVal = -Infinity;
+                                const neighbors = [[y-1,x], [y+1,x], [y,x-1], [y,x+1]];
+                                for (const [ny, nx] of neighbors) {
+                                    if (ny >= 0 && ny < 5 && nx >= 0 && nx < 5 && this.maze[ny][nx] !== 1) {
+                                        maxVal = Math.max(maxVal, this.valueGrid[ny][nx]);
+                                    }
+                                }
+                                newGrid[y][x] = discount * maxVal;
+                            }
+                        }
+                        this.valueGrid = newGrid;
+                        await new Promise(res => setTimeout(res, 50)); 
+                    }
+                },
+                
+                calculatePolicy() {
+                    const arrows = {'-1,0':'↑', '1,0':'↓', '0,-1':'←', '0,1':'→'};
+                    for (let y = 0; y < 5; y++) {
+                        for (let x = 0; x < 5; x++) {
+                             if (this.maze[y][x] !== 0) continue;
+                             let bestVal = -Infinity;
+                             let bestMove = '';
+                             const neighbors = [[y-1,x], [y+1,x], [y,x-1], [y,x+1]];
+                             for (const [ny, nx] of neighbors) {
+                                 if (ny >= 0 && ny < 5 && nx >= 0 && nx < 5 && this.maze[ny][nx] !== 1) {
+                                     if(this.valueGrid[ny][nx] > bestVal) {
+                                         bestVal = this.valueGrid[ny][nx];
+                                         bestMove = `${ny-y},${nx-x}`;
+                                     }
+                                 }
+                             }
+                             this.policyGrid[y][x] = arrows[bestMove] || '';
+                        }
+                    }
+                },
+
+                getCellStyle(value) {
+                    if (value > 0) {
+                        const lightness = 20 + (value * 3); 
+                        return `background-color: hsl(140, 80%, ${lightness}%);`;
+                    }
+                    if (value < 0) {
+                        const lightness = 20 + (Math.abs(value) * 3);
+                        return `background-color: hsl(0, 70%, ${lightness}%);`;
+                    }
+                    return 'background-color: #334155;'; // slate-700
+                }
+            }
+        }
+    </script>
+</body>
+</html>

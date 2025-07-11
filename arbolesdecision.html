@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Árboles de Decisión con ECharts</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+    <style>
+        /* Ya no necesitamos los estilos CSS para D3.js */
+        .section-container { transition: all 0.5s ease-in-out; }
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s; transform-style: preserve-3d; }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; border-radius: 0.75rem;
+        }
+        .flip-card-back { transform: rotateY(180deg); }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-300 font-sans" x-data="decisionTreeApp()">
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section class="min-h-[80vh] flex flex-col justify-center text-center">
+             <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-emerald-400 mb-6">
+                Descubre los Árboles de Decisión
+            </h1>
+            <p class="text-xl text-slate-400 mb-12 max-w-3xl mx-auto">
+                Una herramienta de Machine Learning que imita el razonamiento humano. Explora sus componentes de forma interactiva.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-sky-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg><h3 class="text-2xl font-bold text-white">Nodo (Pregunta)</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-sky-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Nodo</h3><p class="text-sky-100">Punto donde se hace una pregunta sobre una característica. Ej: "¿El pétalo es más largo que 5 cm?".</p></div></div></div>
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657l-5.657-5.657-5.657 5.657C4.219 20.781 6.83 22 10 22s5.781-1.219 7.657-3.343zM12 2v10" /></svg><h3 class="text-2xl font-bold text-white">Rama (Respuesta)</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-emerald-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Rama</h3><p class="text-emerald-100">Representa la respuesta a la pregunta (ej: "Sí" o "No") y te guía al siguiente paso.</p></div></div></div>
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-fuchsia-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-fuchsia-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4M12 3v1m0 16v1m8-16v4m-2-2h4M16 17v4m2-2h-4M9 9l3 3m0 0l3 3M12 12l-3 3m3-3l3-3" /></svg><h3 class="text-2xl font-bold text-white">Hoja (Resultado)</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-fuchsia-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Hoja</h3><p class="text-fuchsia-100">Es el nodo final del camino, la respuesta o predicción final. ¡Aquí está la conclusión!</p></div></div></div>
+            </div>
+        </section>
+
+        <section class="text-center py-16">
+            <h2 class="text-3xl font-bold text-white mb-8">¿Qué quieres explorar ahora?</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+                <button @click="showSection('diagram')" class="flex items-center gap-3 bg-sky-600 hover:bg-sky-500 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    <span>¡Ver los Diagramas!</span>
+                </button>
+                <button @click="showSection('classification')" class="flex items-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                    <span>¡Probar el clasificador de crédito!</span>
+                </button>
+            </div>
+        </section>
+
+        <div x-show="visibleSection === 'diagram'" x-transition class="section-container" id="diagram-section">
+            <section class="min-h-screen flex flex-col justify-center items-center py-20">
+                <h2 class="text-4xl font-bold mb-4 text-center">Visualiza el Árbol en Acción con ECharts</h2>
+                <p class="text-slate-400 mb-8 text-center max-w-2xl">Ahora los diagramas son generados por ECharts. La interacción (expandir, contraer, tooltips) viene incorporada en la biblioteca.</p>
+                <div class="flex space-x-4 mb-8">
+                    <button @click="changeDataset('iris')" :class="{'bg-sky-500 text-white': activeDataset === 'iris', 'bg-slate-700 hover:bg-slate-600': activeDataset !== 'iris'}" class="px-6 py-2 rounded-lg font-semibold transition-colors duration-300">Clasificador de Flores (Iris)</button>
+                    <button @click="changeDataset('credito')" :class="{'bg-sky-500 text-white': activeDataset === 'credito', 'bg-slate-700 hover:bg-slate-600': activeDataset !== 'credito'}" class="px-6 py-2 rounded-lg font-semibold transition-colors duration-300">Aprobación de Crédito</button>
+                </div>
+                <div id="tree-chart-container" class="bg-slate-800 rounded-xl shadow-lg w-full min-h-[600px] p-4">
+                    <div id="tree-chart" style="width: 100%; height: 600px;"></div>
+                </div>
+            </section>
+        </div>
+
+        <div x-show="visibleSection === 'classification'" x-transition class="section-container" id="classification-section">
+            <section class="min-h-screen flex flex-col justify-center items-center py-20">
+                <h2 class="text-4xl font-bold mb-4 text-center">Clasificación de Crédito con JavaScript</h2>
+                <p class="text-slate-400 mb-8 text-center max-w-2xl">Modifica los valores y presiona "Verificar" para ver cómo un árbol de decisión simple (simulado con código) aprueba o rechaza un crédito.</p>
+                <div class="w-full max-w-4xl grid md:grid-cols-2 gap-8 items-center bg-slate-800 rounded-xl shadow-lg p-8">
+                    <div class="space-y-6">
+                        <div><label for="income" class="block text-sm font-medium text-slate-300 mb-2">Ingreso Anual (USD)</label><input type="number" id="income" x-model.number="creditInput.income" class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500"></div>
+                        <div><label for="history" class="block text-sm font-medium text-slate-300 mb-2">Historial Crediticio</label><select id="history" x-model="creditInput.history" class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500"><option value="bueno">Bueno</option><option value="regular">Regular</option><option value="malo">Malo</option></select></div>
+                        <div><label for="debt" class="block text-sm font-medium text-slate-300 mb-2">Nivel de Deuda (%)</label><input type="range" id="debt" min="0" max="100" x-model.number="creditInput.debt" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"><div class="text-center text-emerald-400 font-bold" x-text="creditInput.debt + '%'"></div></div>
+                        <button @click="runPrediction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 text-lg">¡Verificar Aprobación!</button>
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-slate-900 rounded-lg min-h-[300px] p-6 text-center">
+                        <template x-if="predictionResult"><div :class="predictionResult.approved ? 'bg-green-500/20 text-green-300 border-green-500' : 'bg-red-500/20 text-red-300 border-red-500'" class="w-full p-6 rounded-lg border-2 border-dashed"><h3 class="text-3xl font-bold mb-3" x-text="predictionResult.approved ? '🎉 ¡Crédito Aprobado! 🎉' : '😥 Crédito Rechazado 😥'"></h3><p class="text-lg" x-text="predictionResult.reason"></p></div></template>
+                        <template x-if="!predictionResult"><div class="text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><p class="mt-4 text-lg">El resultado de la predicción aparecerá aquí.</p></div></template>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <footer class="bg-slate-900/50 border-t border-slate-800 mt-20 py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold text-white mb-6">Continúa tu viaje de aprendizaje</h3>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="portada.html" class="w-full sm:w-auto inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Volver a la Portada</a>
+                <a href="reinforcement.html" class="w-full sm:w-auto inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">¡Explorar Reinforcement Learning!</a>
+            </div>
+        </div>
+    </footer>
+    
+    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" class="fixed bottom-8 right-8 bg-sky-500 text-white p-3 rounded-full shadow-lg hover:bg-sky-400 transition-all duration-300 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+    </button>
+
+    <script>
+        function decisionTreeApp() {
+            return {
+                visibleSection: null,
+                activeDataset: 'iris',
+                creditInput: { income: 55000, history: 'bueno', debt: 25 },
+                predictionResult: null,
+                chartInstance: null,
+                chartInitialized: false,
+
+                showSection(section) {
+                    this.visibleSection = section;
+                    this.$nextTick(() => {
+                        document.getElementById(`${section}-section`).scrollIntoView({ behavior: 'smooth' });
+                        if (section === 'diagram' && !this.chartInitialized) {
+                           this.initChart();
+                           this.chartInitialized = true;
+                        }
+                    });
+                },
+
+                runPrediction() { /* (Esta función no cambia) */
+                    const { income, history, debt } = this.creditInput;
+                    if (income > 50000) { if (history === 'bueno') { this.predictionResult = { approved: true, reason: 'El cliente tiene ingresos altos y buen historial crediticio.' }; } else { if (debt < 40) { this.predictionResult = { approved: true, reason: 'Aunque el historial no es perfecto, los ingresos son altos y la deuda es baja.' }; } else { this.predictionResult = { approved: false, reason: 'Los ingresos son altos, pero el nivel de deuda es demasiado elevado.' }; } } } else { if (history === 'malo') { this.predictionResult = { approved: false, reason: 'Los ingresos son bajos y el historial crediticio es malo.' }; } else { if (debt < 20) { this.predictionResult = { approved: true, reason: 'Aunque los ingresos son moderados, el historial es aceptable y la deuda es muy baja.' }; } else { this.predictionResult = { approved: false, reason: 'Los ingresos no son suficientes para soportar el nivel de deuda actual.' }; } } }
+                },
+
+                datasets: { /* (Los datos no cambian) */
+                    iris: { name: "Clasificador de Flores Iris", children: [{ name: "¿Largo del pétalo <= 2.45 cm?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: Es una flor SETOSA" }] }, { name: "Respuesta: NO", children: [{ name: "¿Ancho del pétalo <= 1.75 cm?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: Es una flor VERSICOLOR" }]}, { name: "Respuesta: NO", children: [{ name: "Resultado: Es una flor VIRGINICA" }]}]}]}]}]},
+                    credito: { name: "Decisión de Crédito", children: [{ name: "¿Ingreso Anual > $50,000?", children: [ { name: "Respuesta: SÍ (Ingreso Alto)", children: [{ name: "¿Historial crediticio es Bueno?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, { name: "Respuesta: NO", children: [{ name: "¿Nivel de deuda < 40%?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }]}]}]}] }, { name: "Respuesta: NO (Ingreso Bajo/Medio)", children: [{ name: "¿Historial crediticio es Malo?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }, { name: "Respuesta: NO", children: [{ name: "¿Nivel de deuda < 20%?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }]}]}]}]}]}]}
+                },
+                
+                initChart() {
+                    const chartDom = document.getElementById('tree-chart');
+                    this.chartInstance = echarts.init(chartDom);
+                    this.drawTree();
+                },
+
+                changeDataset(datasetName) {
+                    this.activeDataset = datasetName;
+                    this.drawTree();
+                },
+
+                // 3. Reescribimos la función drawTree usando ECharts
+                drawTree() {
+                    if (!this.chartInstance) return;
+
+                    const data = this.datasets[this.activeDataset];
+                    const colors = this.activeDataset === 'iris' 
+                        ? { line: '#0ea5e9', text: '#e2e8f0', leaf: '#8b5cf6' } 
+                        : { line: '#10b981', text: '#e2e8f0', leaf: '#f43f5e' };
+
+                    const option = {
+                        tooltip: {
+                            trigger: 'item',
+                            triggerOn: 'mousemove'
+                        },
+                        series: [
+                            {
+                                type: 'tree',
+                                data: [data],
+                                top: '5%',
+                                bottom: '5%',
+                                layout: 'orthogonal',
+                                orient: 'LR', // De izquierda a derecha (Left to Right)
+                                symbol: 'circle',
+                                symbolSize: 12,
+                                initialTreeDepth: 2, // Profundidad inicial expandida
+
+                                label: {
+                                    position: 'left',
+                                    verticalAlign: 'middle',
+                                    align: 'right',
+                                    fontSize: 14,
+                                    color: colors.text
+                                },
+
+                                leaves: {
+                                    label: {
+                                        position: 'right',
+                                        verticalAlign: 'middle',
+                                        align: 'left',
+                                        color: colors.leaf,
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                
+                                lineStyle: {
+                                    color: colors.line,
+                                    width: 2
+                                },
+
+                                emphasis: {
+                                    focus: 'descendant'
+                                },
+
+                                expandAndCollapse: true,
+                                animationDuration: 550,
+                            }
+                        ]
+                    };
+                    
+                    this.chartInstance.setOption(option);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

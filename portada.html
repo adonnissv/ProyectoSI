@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portada - Machine Learning</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* Estilos personalizados si fueran necesarios, aunque Tailwind cubre la mayoría */
+        /* Animación suave para el botón de scroll to top */
+        .scroll-to-top-btn { transition: all 0.3s ease-in-out; }
+        .scroll-to-top-btn:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-300 font-sans" x-data="{}">
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section class="min-h-[80vh] flex flex-col justify-center items-center text-center">
+            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-emerald-400 mb-6 animate-pulse">
+                Página web didáctica e interactiva sobre el Machine Learning
+            </h1>
+            <p class="text-xl text-slate-400 mb-8 max-w-3xl mx-auto">
+                <span class="font-semibold text-white">Autores:</span> Adonis Subiabre Vásquez y Christian Ortega Reyes
+            </p>
+
+            <div class="bg-slate-800 rounded-xl shadow-2xl shadow-slate-900/50 p-8 max-w-3xl mx-auto text-left mb-12">
+                <h2 class="text-3xl font-bold text-white mb-4 text-center">Bienvenido al mundo del Aprendizaje Automático</h2>
+                <p class="text-lg text-slate-400 mb-4">
+                    El <strong class="text-sky-400">Machine Learning</strong> (o Aprendizaje Automático) es una rama fascinante de la inteligencia artificial que permite a las computadoras aprender y tomar decisiones a partir de datos, sin necesidad de ser programadas explícitamente para cada tarea. Imagina que en lugar de darle a una máquina una lista de reglas, le das ejemplos y ella misma descubre los patrones.
+                </p>
+                <p class="text-lg text-slate-400">
+                    Desde recomendarte una película hasta detectar fraudes bancarios, el Machine Learning está transformando nuestro mundo. En esta página, exploraremos uno de sus modelos más intuitivos y poderosos.
+                </p>
+            </div>
+            
+            <a href="arbolesdecision.html" class="inline-flex items-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-10 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-emerald-900/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                <span>¡Sigamos Explorando los Árboles de Decisión!</span>
+            </a>
+        </section>
+
+        <section class="py-20 text-center">
+            <h2 class="text-4xl font-bold text-white mb-8">¿Por qué el Machine Learning es importante?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-800 rounded-xl shadow-lg p-6 flex flex-col items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1l-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    <h3 class="text-2xl font-bold text-white mb-2">Automatización Inteligente</h3>
+                    <p class="text-slate-400">Permite a las máquinas realizar tareas complejas y repetitivas con alta eficiencia, liberando tiempo humano para la creatividad.</p>
+                </div>
+                <div class="bg-slate-800 rounded-xl shadow-lg p-6 flex flex-col items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2-3-.895-3-2 1.343-2 3-2zM12 20a9.004 9.004 0 01-4.9-1.479L5 19m4-1c-.042 0-.083.011-.123.011l-.225.01c-.136.007-.272.012-.412.012H4.5A2.5 2.5 0 012 17.5V15h2V8a2 2 0 012-2h1a2 2 0 012 2v2h2V8a2 2 0 012-2h1a2 2 0 012 2v2h2V8a2 2 0 012-2h1a2 2 0 012 2v7.5A2.5 2.5 0 0119.5 20H19.5c-.14 0-.276-.005-.412-.012l-.225-.01c-.04-.007-.081-.011-.123-.011L12 20z" /></svg>
+                    <h3 class="text-2xl font-bold text-white mb-2">Análisis Predictivo</h3>
+                    <p class="text-slate-400">Permite prever tendencias futuras y comportamientos, desde el clima hasta el rendimiento de inversiones, basándose en datos históricos.</p>
+                </div>
+                <div class="bg-slate-800 rounded-xl shadow-lg p-6 flex flex-col items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-fuchsia-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7V4c0-1.105 3.582-2 8-2s8 .895 8 2v3M12 22v-8" /></svg>
+                    <h3 class="text-2xl font-bold text-white mb-2">Personalización Mejorada</h3>
+                    <p class="text-slate-400">Ofrece experiencias más relevantes y personalizadas a los usuarios en diversos ámbitos, desde el comercio electrónico hasta la salud.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="bg-slate-900/50 border-t border-slate-800 mt-20 py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-slate-400 text-sm">
+                Desarrollado con ❤️ para comprender el fascinante mundo del Machine Learning.
+            </p>
+        </div>
+    </footer>
+
+    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" class="fixed bottom-8 right-8 bg-sky-500 text-white p-3 rounded-full shadow-lg hover:bg-sky-400 transition-all duration-300 z-50 scroll-to-top-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+    </button>
+
+</body>
+</html>

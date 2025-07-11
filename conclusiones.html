@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conclusiones y Comparativa</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-300 font-sans" x-data="{}">
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section class="text-center mb-20">
+            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-purple-400 mb-6">
+                Conclusiones y Comparativa
+            </h1>
+            <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+                Exploramos dos paradigmas del Machine Learning. Ahora, comparemos sus fortalezas, debilidades y cómo pueden ser usados para enseñar.
+            </p>
+        </section>
+
+        <section class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 text-sky-400">Árboles de Decisión</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="flip-card min-h-[320px]"><div class="flip-card-inner shadow-2xl shadow-sky-900/50">
+                    <div class="flip-card-front bg-slate-800"><h3 class="text-2xl font-bold text-white mb-4">✅ Ventajas</h3><p>Fáciles de entender e interpretar. Su lógica de "si... entonces..." es muy visual.</p><p class="mt-4 text-xs text-slate-500">(Pasa el cursor)</p></div>
+                    <div class="flip-card-back bg-sky-900 text-sky-100"><h3 class="text-2xl font-bold mb-4">Fortalezas Clave</h3><ul class="list-disc list-inside text-left"><li>Manejan datos numéricos y categóricos.</li><li>Requieren poca preparación de datos.</li><li>Son rápidos para clasificar.</li><li>Su funcionamiento es transparente (caja blanca).</li></ul></div>
+                </div></div>
+                <div class="flip-card min-h-[320px]"><div class="flip-card-inner shadow-2xl shadow-rose-900/50">
+                    <div class="flip-card-front bg-slate-800"><h3 class="text-2xl font-bold text-white mb-4">❌ Limitaciones</h3><p>Pueden volverse demasiado complejos y "memorizar" los datos (sobreajuste).</p><p class="mt-4 text-xs text-slate-500">(Pasa el cursor)</p></div>
+                    <div class="flip-card-back bg-rose-900 text-rose-100"><h3 class="text-2xl font-bold mb-4">Debilidades a Considerar</h3><ul class="list-disc list-inside text-left"><li>Son inestables; pequeños cambios en los datos pueden alterar el árbol.</li><li>No son ideales para tareas de predicción continua.</li><li>Pueden crear árboles sesgados si algunas clases dominan.</li></ul></div>
+                </div></div>
+                <div class="flip-card min-h-[320px]"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50">
+                    <div class="flip-card-front bg-slate-800"><h3 class="text-2xl font-bold text-white mb-4">🎯 Aplicaciones</h3><p>Ideales para problemas de clasificación donde la interpretabilidad es clave.</p><p class="mt-4 text-xs text-slate-500">(Pasa el cursor)</p></div>
+                    <div class="flip-card-back bg-emerald-900 text-emerald-100"><h3 class="text-2xl font-bold mb-4">Ejemplos de Uso</h3><ul class="list-disc list-inside text-left"><li>Diagnóstico médico preliminar.</li><li>Análisis de riesgo crediticio (aprobado/rechazado).</li><li>Segmentación de clientes.</li><li>Identificación de especies de plantas.</li></ul></div>
+                </div></div>
+            </div>
+        </section>
+
+        <section class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 text-purple-400">Aprendizaje por Refuerzo</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="flip-card min-h-[320px]"><div class="flip-card-inner shadow-2xl shadow-sky-900/50">
+                    <div class="flip-card-front bg-slate-800"><h3 class="text-2xl font-bold text-white mb-4">✅ Ventajas</h3><p>Capaz de resolver problemas muy complejos sin datos etiquetados, aprendiendo de la experiencia.</p><p class="mt-4 text-xs text-slate-500">(Pasa el cursor)</p></div>
+                    <div class="flip-card-back bg-sky-900 text-sky-100"><h3 class="text-2xl font-bold mb-4">Fortalezas Clave</h3><ul class="list-disc list-inside text-left"><li>Encuentra soluciones que un humano no vería.</li><li>Se adapta a entornos cambiantes.</li><li>Ideal para la toma de decisiones secuencial.</li><li>Maximiza una recompensa a largo plazo.</li></ul></div>
+                </div></div>
+                <div class="flip-card min-h-[320px]"><div class="flip-card-inner shadow-2xl shadow-rose-900/50">
+                    <div class="flip-card-front bg-slate-800"><h3 class="text-2xl font-bold text-white mb-4">❌ Limitaciones</h3><p>Requiere muchísimos datos y tiempo de entrenamiento ("hambre de datos").</p><p class="mt-4 text-xs text-slate-500">(Pasa el cursor)</p></div>
+                    <div class="flip-card-back bg-rose-900 text-rose-100"><h3 class="text-2xl font-bold mb-4">Debilidades a Considerar</h3><ul class="list-disc list-inside text-left"><li>El diseño de recompensas es difícil y crítico.</li><li>La exploración puede ser peligrosa en el mundo real.</li><li>A menudo es una "caja negra", difícil de interpretar.</li><li>Muy sensible a los hiperparámetros.</li></ul></div>
+                </div></div>
+                <div class="flip-card min-h-[320px]"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50">
+                    <div class="flip-card-front bg-slate-800"><h3 class="text-2xl font-bold text-white mb-4">🎯 Aplicaciones</h3><p>Perfecto para sistemas autónomos que deben tomar decisiones en entornos dinámicos.</p><p class="mt-4 text-xs text-slate-500">(Pasa el cursor)</p></div>
+                    <div class="flip-card-back bg-emerald-900 text-emerald-100"><h3 class="text-2xl font-bold mb-4">Ejemplos de Uso</h3><ul class="list-disc list-inside text-left"><li>Robótica y control de vehículos autónomos.</li><li>Maestría en juegos (Ajedrez, Go, Starcraft).</li><li>Optimización de sistemas (ej. data centers).</li><li>Trading algorítmico en finanzas.</li></ul></div>
+                </div></div>
+            </div>
+        </section>
+
+        <section class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 text-white">Recomendaciones de Uso Didáctico</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-slate-800 rounded-lg p-8 border-l-4 border-sky-400">
+                    <h3 class="text-2xl font-bold text-sky-400 mb-4">Para Enseñar con Árboles de Decisión</h3>
+                    <p>Son una herramienta fantástica para introducir conceptos de **clasificación y reglas lógicas**. La visualización del árbol conecta directamente con el pensamiento humano, haciendo tangible la idea de cómo una máquina puede "decidir". Es ideal para explicar la importancia de la **simplicidad y el riesgo de sobreajuste** de una manera muy intuitiva.</p>
+                </div>
+                <div class="bg-slate-800 rounded-lg p-8 border-l-4 border-purple-400">
+                    <h3 class="text-2xl font-bold text-purple-400 mb-4">Para Enseñar con Aprendizaje por Refuerzo</h3>
+                    <p>Es perfecto para ilustrar la idea de **aprender de la experiencia y la toma de decisiones a largo plazo**. Un entorno como el laberinto ayuda a los estudiantes a comprender los conceptos de **estado, acción y recompensa**. Permite enseñar cómo un objetivo complejo (llegar a la meta) se descompone en una serie de decisiones simples pero conectadas.</p>
+                </div>
+            </div>
+        </section>
+        
+    </div>
+
+    <footer class="bg-slate-900/50 border-t border-slate-800 mt-20 py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold text-white mb-6">Gracias por explorar con nosotros</h3>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="arbolesdecision.html" class="w-full sm:w-auto inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">¡Volver a los Árboles!</a>
+                <a href="reinforcement.html" class="w-full sm:w-auto inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">¡Explorar Refuerzo!</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
