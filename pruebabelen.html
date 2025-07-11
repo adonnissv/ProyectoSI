@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Felices 9 Meses, mi amor!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffe4e1;
+            color: #333;
+            text-align: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #ff69b4;
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .poem {
+            font-style: italic;
+            margin-top: 30px;
+            color: #e83e8c;
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5em;
+            margin-top: 40px;
+            color: #ff1493;
+        }
+
+        .heart {
+            color: #ff69b4;
+            font-size: 1.5em;
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart-shape {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff69b4;
+            transform: rotate(-45deg);
+            animation: fall 10s linear infinite;
+        }
+
+        .heart-shape:before,
+        .heart-shape:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff69b4;
+            border-radius: 50%;
+        }
+
+        .heart-shape:before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart-shape:after {
+            top: 0;
+            left: 10px;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 1;
+            }
+            100% {
+                top: 110%;
+                opacity: 0.2;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-container" id="hearts-container"></div>
+
+    <div class="container">
+        <h1>Para Mi Belén</h1>
+        <p><span class="heart">❤</span> ¡Felices 9 meses, mi amor! <span class="heart">❤</span></p>
+        <p>Parece que fue ayer cuando nuestros caminos se cruzaron, y sin embargo, ya son nueve meses llenando mis días de una felicidad que nunca imaginé. Cada momento a tu lado es un tesoro que guardo en lo más profundo de mi corazón.</p>
+        <p>Gracias por tu sonrisa que ilumina mis mañanas, por tu apoyo incondicional y por enseñarme lo que es amar de verdad. Eres mi compañera, mi confidente y mi más grande amor.</p>
+        <div class="poem">
+            <p>"No sé si te lo he dicho, pero desde que estás conmigo, no creo que haya nada imposible. Eres la historia más bonita que el destino escribió en mi vida."</p>
+        </div>
+        <p>No puedo esperar a ver qué nuevas aventuras nos depara el futuro. Por ahora, solo quiero disfrutar de este presente maravilloso contigo.</p>
+        <p class="signature">Con todo mi amor,<br> Tu novio que te ama infinitamente.</p>
+        <p><span class="heart">❤</span><span class="heart">❤</span><span class="heart">❤</span></p>
+    </div>
+
+    <script>
+        const heartsContainer = document.getElementById('hearts-container');
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-shape');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+            heartsContainer.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 10000);
+        }
+
+        setInterval(createHeart, 300);
+    </script>
+
+</body>
+</html>
