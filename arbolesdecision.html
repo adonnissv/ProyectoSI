@@ -10,27 +10,50 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 
     <style>
-
+        /* --- Estilos para ocultar las flechas por defecto en los inputs numéricos --- */
         input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-        /* Ya no necesitamos los estilos CSS para D3.js */
-        .section-container { transition: all 0.5s ease-in-out; }
-        .flip-card { perspective: 1000px; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s; transform-style: preserve-3d; }
-        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back {
-            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden;
-            backface-visibility: hidden; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; border-radius: 0.75rem;
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-        .flip-card-back { transform: rotateY(180deg); }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Para Firefox */
+        }
+
+        /* --- Estilos para las transiciones de las secciones --- */
+        .section-container {
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* --- Estilos para las tarjetas con efecto de giro (Flip Card) --- */
+        .flip-card {
+            perspective: 1000px; /* Perspectiva 3D para el efecto de giro */
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg); /* El giro ocurre al pasar el cursor */
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Para navegadores Webkit */
+            backface-visibility: hidden; /* Oculta la cara trasera de un elemento */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem; /* Bordes redondeados */
+        }
+        .flip-card-back {
+            transform: rotateY(180deg); /* Posiciona la cara trasera para el giro */
+        }
     </style>
 </head>
 
@@ -39,16 +62,53 @@ input[type="number"] {
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <section class="min-h-[80vh] flex flex-col justify-center text-center">
-             <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-emerald-400 mb-6">
+            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-emerald-400 mb-6">
                 Descubre los Árboles de Decisión
             </h1>
             <p class="text-xl text-slate-400 mb-12 max-w-3xl mx-auto">
                 Una herramienta de Machine Learning que imita el razonamiento humano. Explora sus componentes de forma interactiva.
             </p>
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-sky-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg><h3 class="text-2xl font-bold text-white">Nodo (Pregunta)</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-sky-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Nodo</h3><p class="text-sky-100">Punto donde se hace una pregunta sobre una característica. Ej: "¿El pétalo es más largo que 5 cm?".</p></div></div></div>
-                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657l-5.657-5.657-5.657 5.657C4.219 20.781 6.83 22 10 22s5.781-1.219 7.657-3.343zM12 2v10" /></svg><h3 class="text-2xl font-bold text-white">Rama (Respuesta)</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-emerald-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Rama</h3><p class="text-emerald-100">Representa la respuesta a la pregunta (ej: "Sí" o "No") y te guía al siguiente paso.</p></div></div></div>
-                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-fuchsia-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-fuchsia-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4M12 3v1m0 16v1m8-16v4m-2-2h4M16 17v4m2-2h-4M9 9l3 3m0 0l3 3M12 12l-3 3m3-3l3-3" /></svg><h3 class="text-2xl font-bold text-white">Hoja (Resultado)</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-fuchsia-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Hoja</h3><p class="text-fuchsia-100">Es el nodo final del camino, la respuesta o predicción final. ¡Aquí está la conclusión!</p></div></div></div>
+                <div class="flip-card h-64">
+                    <div class="flip-card-inner shadow-2xl shadow-sky-900/50">
+                        <div class="flip-card-front bg-slate-800 p-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                            <h3 class="text-2xl font-bold text-white">Nodo (Pregunta)</h3>
+                            <p class="text-slate-400 mt-2">(Pasa el cursor)</p>
+                        </div>
+                        <div class="flip-card-back bg-sky-900 p-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">Nodo</h3>
+                            <p class="text-sky-100">Punto donde se hace una pregunta sobre una característica. Ej: "¿El pétalo es más largo que 5 cm?".</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card h-64">
+                    <div class="flip-card-inner shadow-2xl shadow-emerald-900/50">
+                        <div class="flip-card-front bg-slate-800 p-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657l-5.657-5.657-5.657 5.657C4.219 20.781 6.83 22 10 22s5.781-1.219 7.657-3.343zM12 2v10" /></svg>
+                            <h3 class="text-2xl font-bold text-white">Rama (Respuesta)</h3>
+                            <p class="text-slate-400 mt-2">(Pasa el cursor)</p>
+                        </div>
+                        <div class="flip-card-back bg-emerald-900 p-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">Rama</h3>
+                            <p class="text-emerald-100">Representa la respuesta a la pregunta (ej: "Sí" o "No") y te guía al siguiente paso.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card h-64">
+                    <div class="flip-card-inner shadow-2xl shadow-fuchsia-900/50">
+                        <div class="flip-card-front bg-slate-800 p-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-fuchsia-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4M12 3v1m0 16v1m8-16v4m-2-2h4M16 17v4m2-2h-4M9 9l3 3m0 0l3 3M12 12l-3 3m3-3l3-3" /></svg>
+                            <h3 class="text-2xl font-bold text-white">Hoja (Resultado)</h3>
+                            <p class="text-slate-400 mt-2">(Pasa el cursor)</p>
+                        </div>
+                        <div class="flip-card-back bg-fuchsia-900 p-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">Hoja</h3>
+                            <p class="text-fuchsia-100">Es el nodo final del camino, la respuesta o predicción final. ¡Aquí está la conclusión!</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -69,7 +129,7 @@ input[type="number"] {
         <div x-show="visibleSection === 'diagram'" x-transition class="section-container" id="diagram-section">
             <section class="min-h-screen flex flex-col justify-center items-center py-20">
                 <h2 class="text-4xl font-bold mb-4 text-center">Visualiza el Árbol de Decisión en Acción</h2>
-                <p class="text-slate-400 mb-8 text-center max-w-2xl">Selecciona los puntos para contraer o expandir el árbol, y así visualizar de forma más dinámica cómo funciona. 🌳✨.</p>
+                <p class="text-slate-400 mb-8 text-center max-w-2xl">Selecciona los puntos para contraer o expandir el árbol, y así visualizar de forma más dinámica cómo funciona. 🌳✨</p>
                 <div class="flex space-x-4 mb-8">
                     <button @click="changeDataset('iris')" :class="{'bg-sky-500 text-white': activeDataset === 'iris', 'bg-slate-700 hover:bg-slate-600': activeDataset !== 'iris'}" class="px-6 py-2 rounded-lg font-semibold transition-colors duration-300">Clasificador de Flores (Iris)</button>
                     <button @click="changeDataset('credito')" :class="{'bg-sky-500 text-white': activeDataset === 'credito', 'bg-slate-700 hover:bg-slate-600': activeDataset !== 'credito'}" class="px-6 py-2 rounded-lg font-semibold transition-colors duration-300">Aprobación de Crédito</button>
@@ -84,96 +144,58 @@ input[type="number"] {
             <section class="min-h-screen flex flex-col justify-center items-center py-20">
                 <h2 class="text-4xl font-bold mb-4 text-center">Clasificación de Crédito</h2>
                 <p class="text-slate-400 mb-8 text-center max-w-2xl">Modifica los valores y presiona "Verificar" para ver cómo un árbol de decisión simple aprueba o rechaza un crédito.</p>
+                
                 <div class="w-full max-w-4xl grid md:grid-cols-2 gap-8 items-center bg-slate-800 rounded-xl shadow-lg p-8">
-        <div class="space-y-6">
-        <!-- Campo de Ingreso Anual con flechas personalizadas -->
-        <div>
-            <label for="income" class="block text-sm font-medium text-slate-300 mb-2 text-center">Ingreso Anual (USD)</label>
-            <div class="relative">
-                <input 
-                    type="number" 
-                    id="income" 
-                    x-model.number="creditInput.income" 
-                    class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500 text-center text-lg py-3 px-4"
-                    style="appearance: textfield;"
-                >
-                <!-- Flechas personalizadas -->
-                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1">
-                    <button @click="creditInput.income = (creditInput.income || 0) + 1000" class="text-emerald-400 hover:text-emerald-300 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" />
-                        </svg>
-                    </button>
-                    <button @click="creditInput.income = Math.max(0, (creditInput.income || 0) - 1000)" class="text-emerald-400 hover:text-emerald-300 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="income" class="block text-sm font-medium text-slate-300 mb-2 text-center">Ingreso Anual (USD)</label>
+                            <div class="relative">
+                                <input type="number" id="income" x-model.number="creditInput.income" class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500 text-center text-lg py-3 px-4">
+                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1">
+                                    <button @click="creditInput.income = (creditInput.income || 0) + 1000" class="text-emerald-400 hover:text-emerald-300 focus:outline-none"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                    <button @click="creditInput.income = Math.max(0, (creditInput.income || 0) - 1000)" class="text-emerald-400 hover:text-emerald-300 focus:outline-none"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="history" class="block text-sm font-medium text-slate-300 mb-2 text-center">Historial Crediticio</label>
+                            <div class="relative">
+                                <select id="history" x-model="creditInput.history" class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500 text-center text-lg py-3 px-4 appearance-none">
+                                    <option value="bueno">Bueno</option>
+                                    <option value="regular">Regular</option>
+                                    <option value="malo">Malo</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="debt" class="block text-sm font-medium text-slate-300 mb-2 text-center">Nivel de Deuda (%)</label>
+                            <input type="range" id="debt" min="0" max="100" x-model.number="creditInput.debt" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-center text-emerald-400 font-bold text-lg" x-text="creditInput.debt + '%'"></div>
+                        </div>
+                        
+                        <button @click="runPrediction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 text-lg transform hover:scale-[1.02]">
+                            ¡Verificar Aprobación!
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-col items-center justify-center bg-slate-900 rounded-lg min-h-[300px] p-6 text-center">
+                        <template x-if="predictionResult">
+                            <div :class="predictionResult.approved ? 'bg-green-500/20 text-green-300 border-green-500' : 'bg-red-500/20 text-red-300 border-red-500'" class="w-full p-6 rounded-lg border-2 border-dashed">
+                                <h3 class="text-3xl font-bold mb-3" x-text="predictionResult.approved ? '🎉 ¡Crédito Aprobado! 🎉' : '😥 Crédito Rechazado 💶'"></h3>
+                                <p class="text-lg" x-text="predictionResult.reason"></p>
+                            </div>
+                        </template>
+                        <template x-if="!predictionResult">
+                            <div class="text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <p class="mt-4 text-lg">El resultado de la predicción aparecerá aquí.</p>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Campo de Historial Crediticio -->
-        <div>
-            <label for="history" class="block text-sm font-medium text-slate-300 mb-2 text-center">Historial Crediticio</label>
-            <div class="relative">
-                <select 
-                    id="history" 
-                    x-model="creditInput.history" 
-                    class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500 text-center text-lg py-3 px-4 appearance-none"
-                >
-                    <option value="bueno">Bueno</option>
-                    <option value="regular">Regular</option>
-                    <option value="malo">Malo</option>
-                </select>
-                <!-- Flecha personalizada para el select -->
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Control deslizante para el nivel de deuda -->
-        <div>
-            <label for="debt" class="block text-sm font-medium text-slate-300 mb-2 text-center">Nivel de Deuda (%)</label>
-            <input 
-                type="range" 
-                id="debt" 
-                min="0" 
-                max="100" 
-                x-model.number="creditInput.debt" 
-                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-            >
-            <div class="text-center text-emerald-400 font-bold text-lg" x-text="creditInput.debt + '%'"></div>
-        </div>
-        
-        <!-- Botón de verificación -->
-        <button @click="runPrediction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 text-lg transform hover:scale-[1.02]">
-            ¡Verificar Aprobación!
-        </button>
-    </div>
-    
-    <!-- Resultado de la clasificación -->
-    <div class="flex flex-col items-center justify-center bg-slate-900 rounded-lg min-h-[300px] p-6 text-center">
-        <template x-if="predictionResult">
-            <div :class="predictionResult.approved ? 'bg-green-500/20 text-green-300 border-green-500' : 'bg-red-500/20 text-red-300 border-red-500'" 
-                 class="w-full p-6 rounded-lg border-2 border-dashed">
-                <h3 class="text-3xl font-bold mb-3" x-text="predictionResult.approved ? '🎉 ¡Crédito Aprobado! 🎉' : '😥 Crédito Rechazado 💶'"></h3>
-                <p class="text-lg" x-text="predictionResult.reason"></p>
-            </div>
-        </template>
-        <template x-if="!predictionResult">
-            <div class="text-slate-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p class="mt-4 text-lg">El resultado de la predicción aparecerá aquí.</p>
-            </div>
-        </template>
-    </div>
-</div>
             </section>
         </div>
     </div>
@@ -188,24 +210,39 @@ input[type="number"] {
         </div>
     </footer>
     
-    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" class="fixed bottom-8 right-8 bg-sky-500 text-white p-3 rounded-full shadow-lg hover:bg-sky-400 transition-all duration-300 z-50">
+    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Volver arriba" class="fixed bottom-8 right-8 bg-sky-500 text-white p-3 rounded-full shadow-lg hover:bg-sky-400 transition-all duration-300 z-50">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
     </button>
 
     <script>
         function decisionTreeApp() {
             return {
+                // --- ESTADO DE LA APLICACIÓN ---
+                // Almacena qué sección está visible: 'diagram' o 'classification'. Nulo por defecto.
                 visibleSection: null,
+                // Almacena qué conjunto de datos está activo en el gráfico: 'iris' o 'credito'.
                 activeDataset: 'iris',
+                // Objeto que almacena los valores del formulario del clasificador.
                 creditInput: { income: 55000, history: 'bueno', debt: 25 },
+                // Almacena el resultado de la predicción para mostrarlo en la UI.
                 predictionResult: null,
+                // Guarda la instancia del gráfico de ECharts para poder actualizarla.
                 chartInstance: null,
+                // Bandera para asegurar que el gráfico se inicialice solo una vez.
                 chartInitialized: false,
 
+                // --- MÉTODOS DE LA APLICACIÓN ---
+
+                /**
+                 * Muestra una sección específica y se desplaza hacia ella.
+                 * @param {string} section - El nombre de la sección a mostrar ('diagram' o 'classification').
+                 */
                 showSection(section) {
                     this.visibleSection = section;
                     this.$nextTick(() => {
+                        // Espera a que el elemento sea visible en el DOM y luego se desplaza.
                         document.getElementById(`${section}-section`).scrollIntoView({ behavior: 'smooth' });
+                        // Inicializa el gráfico solo la primera vez que se muestra la sección de diagramas.
                         if (section === 'diagram' && !this.chartInitialized) {
                            this.initChart();
                            this.chartInitialized = true;
@@ -213,31 +250,53 @@ input[type="number"] {
                     });
                 },
 
+                /**
+                 * Ejecuta la lógica del árbol de decisión para la clasificación de crédito.
+                 * Esta serie de 'if/else' anidados simula las ramas de un árbol de decisión.
+                 */
                 runPrediction() {
                     const { income, history, debt } = this.creditInput;
+                    
+                    // NODO 1: ¿El ingreso es alto?
                     if (income > 50000) { 
+                        // RAMA SÍ (Ingreso alto)
+                        // NODO 2: ¿El historial es bueno?
                         if (history === 'bueno') { 
+                            // HOJA: Aprobado
                             this.predictionResult = { approved: true, reason: 'El cliente tiene ingresos altos y buen historial crediticio.' }; 
                         } else { 
+                            // RAMA NO (Historial no es bueno)
+                            // NODO 3: ¿La deuda es baja?
                             if (debt < 40) { 
+                                // HOJA: Aprobado
                                 this.predictionResult = { approved: true, reason: 'Aunque el historial no es perfecto, los ingresos son altos y la deuda es baja.' }; 
                             } else { 
+                                // HOJA: Rechazado
                                 this.predictionResult = { approved: false, reason: 'Los ingresos son altos, pero el nivel de deuda es demasiado elevado.' }; 
                             } 
                         } 
                     } else { 
+                        // RAMA NO (Ingreso bajo/medio)
+                        // NODO 4: ¿El historial es malo?
                         if (history === 'malo') { 
+                            // HOJA: Rechazado
                             this.predictionResult = { approved: false, reason: 'Los ingresos son bajos y el historial crediticio es malo.' }; 
                         } else { 
+                            // RAMA NO (El historial no es malo)
+                            // NODO 5: ¿La deuda es muy baja?
                             if (debt < 20) { 
+                                // HOJA: Aprobado
                                 this.predictionResult = { approved: true, reason: 'Aunque los ingresos son moderados, el historial es aceptable y la deuda es muy baja.' }; 
                             } else { 
+                                // HOJA: Rechazado
                                 this.predictionResult = { approved: false, reason: 'Los ingresos no son suficientes para soportar el nivel de deuda actual.' }; 
                             } 
                         } 
                     }
                 },
 
+                // --- DATOS PARA LOS GRÁFICOS ---
+                // Contiene la estructura de los árboles de decisión para ECharts.
                 datasets: {
                     iris: { 
                         name: "Clasificador de Flores Iris", 
@@ -277,15 +336,13 @@ input[type="number"] {
                                                     { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
                                                     { 
                                                         name: "Respuesta: NO", 
-                                                        children: [
-                                                            { 
-                                                                name: "¿Nivel de deuda < 40%?", 
-                                                                children: [ 
-                                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
-                                                                    { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }
-                                                                ]
-                                                            }
-                                                        ]
+                                                        children: [{ 
+                                                            name: "¿Nivel de deuda < 40%?", 
+                                                            children: [ 
+                                                                { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
+                                                                { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }
+                                                            ]
+                                                        }]
                                                     }
                                                 ]
                                             }
@@ -300,15 +357,13 @@ input[type="number"] {
                                                     { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }, 
                                                     { 
                                                         name: "Respuesta: NO", 
-                                                        children: [
-                                                            { 
-                                                                name: "¿Nivel de deuda < 20%?", 
-                                                                children: [ 
-                                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
-                                                                    { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }
-                                                                ]
-                                                            }
-                                                        ]
+                                                        children: [{ 
+                                                            name: "¿Nivel de deuda < 20%?", 
+                                                            children: [ 
+                                                                { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
+                                                                { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }
+                                                            ]
+                                                        }]
                                                     }
                                                 ]
                                             }
@@ -320,82 +375,77 @@ input[type="number"] {
                     }
                 },
                 
+                // --- MÉTODOS PARA EL GRÁFICO ---
+
+                /**
+                 * Inicializa la instancia del gráfico de ECharts.
+                 */
                 initChart() {
                     const chartDom = document.getElementById('tree-chart');
                     this.chartInstance = echarts.init(chartDom);
-                    this.drawTree();
+                    this.drawTree(); // Dibuja el árbol inicial
+                    // Añade un listener para redimensionar el gráfico si cambia el tamaño de la ventana.
+                    window.addEventListener('resize', () => this.chartInstance.resize());
                 },
 
+                /**
+                 * Cambia el conjunto de datos activo y redibuja el árbol.
+                 * @param {string} datasetName - El nombre del dataset a usar ('iris' o 'credito').
+                 */
                 changeDataset(datasetName) {
                     this.activeDataset = datasetName;
                     this.drawTree();
                 },
 
-                // Modificación clave: Cambiamos orient: 'LR' a orient: 'TB' para orientación vertical
+                /**
+                 * Dibuja o actualiza el gráfico del árbol de decisión con las opciones de ECharts.
+                 */
                 drawTree() {
-                    if (!this.chartInstance) return;
+                    if (!this.chartInstance) return; // No hacer nada si el gráfico no está inicializado.
 
                     const data = this.datasets[this.activeDataset];
+                    // Define paletas de colores dinámicas según el dataset activo.
                     const colors = this.activeDataset === 'iris' 
-                        ? { line: '#0ea5e9', text: '#e2e8f0', leaf: '#8b5cf6' } 
-                        : { line: '#10b981', text: '#e2e8f0', leaf: '#f43f5e' };
+                        ? { line: '#0ea5e9', text: '#e2e8f0', leaf: '#8b5cf6' } // Colores para Iris
+                        : { line: '#10b981', text: '#e2e8f0', leaf: '#f43f5e' }; // Colores para Crédito
 
                     const option = {
-                        tooltip: {
-                            trigger: 'item',
-                            triggerOn: 'mousemove'
-                        },
-                        series: [
-                            {
-                                type: 'tree',
-                                data: [data],
-                                top: '5%',
-                                bottom: '5%',
-                                layout: 'orthogonal',
-                                orient: 'TB', // Cambio clave: de 'LR' (horizontal) a 'TB' (vertical)
-                                symbol: 'circle',
-                                symbolSize: 12,
-                                initialTreeDepth: 2, // Profundidad inicial expandida
+                        tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+                        series: [{
+                            type: 'tree',
+                            data: [data],
+                            top: '5%', bottom: '5%', // Márgenes superior e inferior
+                            layout: 'orthogonal',
+                            orient: 'TB', // Orientación: Top-to-Bottom (Vertical)
+                            symbol: 'circle', // Nodos como círculos
+                            symbolSize: 12, // Tamaño de los nodos
+                            initialTreeDepth: 3, // Profundidad inicial expandida
 
+                            label: {
+                                position: 'top',
+                                verticalAlign: 'middle',
+                                align: 'center',
+                                fontSize: 14,
+                                color: colors.text
+                            },
+                            leaves: {
                                 label: {
-                                    position: 'top',
-                                    verticalAlign: 'middle',
-                                    align: 'center',
-                                    fontSize: 14,
-                                    color: colors.text
-                                },
-
-                                leaves: {
-                                    label: {
-                                        position: 'bottom',
-                                        verticalAlign: 'middle',
-                                        align: 'center',
-                                        color: colors.leaf,
-                                        fontWeight: 'bold'
-                                    }
-                                },
-                                
-                                lineStyle: {
-                                    color: colors.line,
-                                    width: 2
-                                },
-
-                                emphasis: {
-                                    focus: 'descendant'
-                                },
-
-                                expandAndCollapse: true,
-                                animationDuration: 550,
-                            }
-                        ]
+                                    position: 'bottom',
+                                    color: colors.leaf,
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            lineStyle: {
+                                color: colors.line,
+                                width: 2
+                            },
+                            emphasis: { focus: 'descendant' }, // Al hacer hover, destaca el nodo y sus descendientes
+                            expandAndCollapse: true, // Permite expandir y colapsar nodos
+                            animationDuration: 550, // Duración de la animación
+                        }]
                     };
                     
                     this.chartInstance.setOption(option);
-                    
-                    // Ajustar automáticamente el tamaño si es necesario
-                    window.addEventListener('resize', () => {
-                        this.chartInstance.resize();
-                    });
                 }
             }
         }

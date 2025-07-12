@@ -312,10 +312,10 @@ env.<span class="token-function">close</span>()</code></pre>
                 
                 calculatePolicy() {
                     const directions = [
-                        { dy: 1, dx: 0, symbol: '↑', priority: 0 },  // Abajo (máxima prioridad)
+                        { dy: 1, dx: 0, symbol: '↑', priority: 0 },  // Arriba (máxima prioridad)
                         { dy: 0, dx: 1, symbol: '→', priority: 1 },   // Derecha
                         { dy: 0, dx: -1, symbol: '←', priority: 2 },  // Izquierda
-                        { dy: -1, dx: 0, symbol: '↓', priority: 3 }   // Arriba
+                        { dy: -1, dx: 0, symbol: '↓', priority: 3 }   // Abajo
                     ];
 
                     for (let y = 0; y < 5; y++) {
