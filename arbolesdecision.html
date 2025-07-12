@@ -10,6 +10,16 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 
     <style>
+
+        input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
         /* Ya no necesitamos los estilos CSS para D3.js */
         .section-container { transition: all 0.5s ease-in-out; }
         .flip-card { perspective: 1000px; }
@@ -58,8 +68,8 @@
 
         <div x-show="visibleSection === 'diagram'" x-transition class="section-container" id="diagram-section">
             <section class="min-h-screen flex flex-col justify-center items-center py-20">
-                <h2 class="text-4xl font-bold mb-4 text-center">Visualiza el Árbol en Acción con ECharts</h2>
-                <p class="text-slate-400 mb-8 text-center max-w-2xl">Ahora los diagramas son generados por ECharts. La interacción (expandir, contraer, tooltips) viene incorporada en la biblioteca.</p>
+                <h2 class="text-4xl font-bold mb-4 text-center">Visualiza el Árbol de Decisión en Acción</h2>
+                <p class="text-slate-400 mb-8 text-center max-w-2xl">Selecciona los puntos para contraer o expandir el árbol, y así visualizar de forma más dinámica cómo funciona. 🌳✨.</p>
                 <div class="flex space-x-4 mb-8">
                     <button @click="changeDataset('iris')" :class="{'bg-sky-500 text-white': activeDataset === 'iris', 'bg-slate-700 hover:bg-slate-600': activeDataset !== 'iris'}" class="px-6 py-2 rounded-lg font-semibold transition-colors duration-300">Clasificador de Flores (Iris)</button>
                     <button @click="changeDataset('credito')" :class="{'bg-sky-500 text-white': activeDataset === 'credito', 'bg-slate-700 hover:bg-slate-600': activeDataset !== 'credito'}" class="px-6 py-2 rounded-lg font-semibold transition-colors duration-300">Aprobación de Crédito</button>
@@ -72,20 +82,98 @@
 
         <div x-show="visibleSection === 'classification'" x-transition class="section-container" id="classification-section">
             <section class="min-h-screen flex flex-col justify-center items-center py-20">
-                <h2 class="text-4xl font-bold mb-4 text-center">Clasificación de Crédito con JavaScript</h2>
-                <p class="text-slate-400 mb-8 text-center max-w-2xl">Modifica los valores y presiona "Verificar" para ver cómo un árbol de decisión simple (simulado con código) aprueba o rechaza un crédito.</p>
+                <h2 class="text-4xl font-bold mb-4 text-center">Clasificación de Crédito</h2>
+                <p class="text-slate-400 mb-8 text-center max-w-2xl">Modifica los valores y presiona "Verificar" para ver cómo un árbol de decisión simple aprueba o rechaza un crédito.</p>
                 <div class="w-full max-w-4xl grid md:grid-cols-2 gap-8 items-center bg-slate-800 rounded-xl shadow-lg p-8">
-                    <div class="space-y-6">
-                        <div><label for="income" class="block text-sm font-medium text-slate-300 mb-2">Ingreso Anual (USD)</label><input type="number" id="income" x-model.number="creditInput.income" class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500"></div>
-                        <div><label for="history" class="block text-sm font-medium text-slate-300 mb-2">Historial Crediticio</label><select id="history" x-model="creditInput.history" class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500"><option value="bueno">Bueno</option><option value="regular">Regular</option><option value="malo">Malo</option></select></div>
-                        <div><label for="debt" class="block text-sm font-medium text-slate-300 mb-2">Nivel de Deuda (%)</label><input type="range" id="debt" min="0" max="100" x-model.number="creditInput.debt" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"><div class="text-center text-emerald-400 font-bold" x-text="creditInput.debt + '%'"></div></div>
-                        <button @click="runPrediction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 text-lg">¡Verificar Aprobación!</button>
-                    </div>
-                    <div class="flex flex-col items-center justify-center bg-slate-900 rounded-lg min-h-[300px] p-6 text-center">
-                        <template x-if="predictionResult"><div :class="predictionResult.approved ? 'bg-green-500/20 text-green-300 border-green-500' : 'bg-red-500/20 text-red-300 border-red-500'" class="w-full p-6 rounded-lg border-2 border-dashed"><h3 class="text-3xl font-bold mb-3" x-text="predictionResult.approved ? '🎉 ¡Crédito Aprobado! 🎉' : '😥 Crédito Rechazado 😥'"></h3><p class="text-lg" x-text="predictionResult.reason"></p></div></template>
-                        <template x-if="!predictionResult"><div class="text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><p class="mt-4 text-lg">El resultado de la predicción aparecerá aquí.</p></div></template>
-                    </div>
+        <div class="space-y-6">
+        <!-- Campo de Ingreso Anual con flechas personalizadas -->
+        <div>
+            <label for="income" class="block text-sm font-medium text-slate-300 mb-2 text-center">Ingreso Anual (USD)</label>
+            <div class="relative">
+                <input 
+                    type="number" 
+                    id="income" 
+                    x-model.number="creditInput.income" 
+                    class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500 text-center text-lg py-3 px-4"
+                    style="appearance: textfield;"
+                >
+                <!-- Flechas personalizadas -->
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1">
+                    <button @click="creditInput.income = (creditInput.income || 0) + 1000" class="text-emerald-400 hover:text-emerald-300 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" />
+                        </svg>
+                    </button>
+                    <button @click="creditInput.income = Math.max(0, (creditInput.income || 0) - 1000)" class="text-emerald-400 hover:text-emerald-300 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Campo de Historial Crediticio -->
+        <div>
+            <label for="history" class="block text-sm font-medium text-slate-300 mb-2 text-center">Historial Crediticio</label>
+            <div class="relative">
+                <select 
+                    id="history" 
+                    x-model="creditInput.history" 
+                    class="w-full bg-slate-700 text-white rounded-md border-slate-600 focus:ring-emerald-500 focus:border-emerald-500 text-center text-lg py-3 px-4 appearance-none"
+                >
+                    <option value="bueno">Bueno</option>
+                    <option value="regular">Regular</option>
+                    <option value="malo">Malo</option>
+                </select>
+                <!-- Flecha personalizada para el select -->
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Control deslizante para el nivel de deuda -->
+        <div>
+            <label for="debt" class="block text-sm font-medium text-slate-300 mb-2 text-center">Nivel de Deuda (%)</label>
+            <input 
+                type="range" 
+                id="debt" 
+                min="0" 
+                max="100" 
+                x-model.number="creditInput.debt" 
+                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+            >
+            <div class="text-center text-emerald-400 font-bold text-lg" x-text="creditInput.debt + '%'"></div>
+        </div>
+        
+        <!-- Botón de verificación -->
+        <button @click="runPrediction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 text-lg transform hover:scale-[1.02]">
+            ¡Verificar Aprobación!
+        </button>
+    </div>
+    
+    <!-- Resultado de la clasificación -->
+    <div class="flex flex-col items-center justify-center bg-slate-900 rounded-lg min-h-[300px] p-6 text-center">
+        <template x-if="predictionResult">
+            <div :class="predictionResult.approved ? 'bg-green-500/20 text-green-300 border-green-500' : 'bg-red-500/20 text-red-300 border-red-500'" 
+                 class="w-full p-6 rounded-lg border-2 border-dashed">
+                <h3 class="text-3xl font-bold mb-3" x-text="predictionResult.approved ? '🎉 ¡Crédito Aprobado! 🎉' : '😥 Crédito Rechazado 💶'"></h3>
+                <p class="text-lg" x-text="predictionResult.reason"></p>
+            </div>
+        </template>
+        <template x-if="!predictionResult">
+            <div class="text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="mt-4 text-lg">El resultado de la predicción aparecerá aquí.</p>
+            </div>
+        </template>
+    </div>
+</div>
             </section>
         </div>
     </div>
@@ -125,14 +213,111 @@
                     });
                 },
 
-                runPrediction() { /* (Esta función no cambia) */
+                runPrediction() {
                     const { income, history, debt } = this.creditInput;
-                    if (income > 50000) { if (history === 'bueno') { this.predictionResult = { approved: true, reason: 'El cliente tiene ingresos altos y buen historial crediticio.' }; } else { if (debt < 40) { this.predictionResult = { approved: true, reason: 'Aunque el historial no es perfecto, los ingresos son altos y la deuda es baja.' }; } else { this.predictionResult = { approved: false, reason: 'Los ingresos son altos, pero el nivel de deuda es demasiado elevado.' }; } } } else { if (history === 'malo') { this.predictionResult = { approved: false, reason: 'Los ingresos son bajos y el historial crediticio es malo.' }; } else { if (debt < 20) { this.predictionResult = { approved: true, reason: 'Aunque los ingresos son moderados, el historial es aceptable y la deuda es muy baja.' }; } else { this.predictionResult = { approved: false, reason: 'Los ingresos no son suficientes para soportar el nivel de deuda actual.' }; } } }
+                    if (income > 50000) { 
+                        if (history === 'bueno') { 
+                            this.predictionResult = { approved: true, reason: 'El cliente tiene ingresos altos y buen historial crediticio.' }; 
+                        } else { 
+                            if (debt < 40) { 
+                                this.predictionResult = { approved: true, reason: 'Aunque el historial no es perfecto, los ingresos son altos y la deuda es baja.' }; 
+                            } else { 
+                                this.predictionResult = { approved: false, reason: 'Los ingresos son altos, pero el nivel de deuda es demasiado elevado.' }; 
+                            } 
+                        } 
+                    } else { 
+                        if (history === 'malo') { 
+                            this.predictionResult = { approved: false, reason: 'Los ingresos son bajos y el historial crediticio es malo.' }; 
+                        } else { 
+                            if (debt < 20) { 
+                                this.predictionResult = { approved: true, reason: 'Aunque los ingresos son moderados, el historial es aceptable y la deuda es muy baja.' }; 
+                            } else { 
+                                this.predictionResult = { approved: false, reason: 'Los ingresos no son suficientes para soportar el nivel de deuda actual.' }; 
+                            } 
+                        } 
+                    }
                 },
 
-                datasets: { /* (Los datos no cambian) */
-                    iris: { name: "Clasificador de Flores Iris", children: [{ name: "¿Largo del pétalo <= 2.45 cm?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: Es una flor SETOSA" }] }, { name: "Respuesta: NO", children: [{ name: "¿Ancho del pétalo <= 1.75 cm?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: Es una flor VERSICOLOR" }]}, { name: "Respuesta: NO", children: [{ name: "Resultado: Es una flor VIRGINICA" }]}]}]}]}]},
-                    credito: { name: "Decisión de Crédito", children: [{ name: "¿Ingreso Anual > $50,000?", children: [ { name: "Respuesta: SÍ (Ingreso Alto)", children: [{ name: "¿Historial crediticio es Bueno?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, { name: "Respuesta: NO", children: [{ name: "¿Nivel de deuda < 40%?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }]}]}]}] }, { name: "Respuesta: NO (Ingreso Bajo/Medio)", children: [{ name: "¿Historial crediticio es Malo?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }, { name: "Respuesta: NO", children: [{ name: "¿Nivel de deuda < 20%?", children: [ { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }]}]}]}]}]}]}
+                datasets: {
+                    iris: { 
+                        name: "Clasificador de Flores Iris", 
+                        children: [
+                            { 
+                                name: "¿Largo del pétalo <= 2.45 cm?", 
+                                children: [ 
+                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: Es una flor SETOSA" }] }, 
+                                    { 
+                                        name: "Respuesta: NO", 
+                                        children: [
+                                            { 
+                                                name: "¿Ancho del pétalo <= 1.75 cm?", 
+                                                children: [ 
+                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: Es una flor VERSICOLOR" }]}, 
+                                                    { name: "Respuesta: NO", children: [{ name: "Resultado: Es una flor VIRGINICA" }]}
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    credito: { 
+                        name: "Decisión de Crédito", 
+                        children: [
+                            { 
+                                name: "¿Ingreso Anual > $50,000?", 
+                                children: [ 
+                                    { 
+                                        name: "Respuesta: SÍ (Ingreso Alto)", 
+                                        children: [
+                                            { 
+                                                name: "¿Historial crediticio es Bueno?", 
+                                                children: [ 
+                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
+                                                    { 
+                                                        name: "Respuesta: NO", 
+                                                        children: [
+                                                            { 
+                                                                name: "¿Nivel de deuda < 40%?", 
+                                                                children: [ 
+                                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
+                                                                    { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }, 
+                                    { 
+                                        name: "Respuesta: NO (Ingreso Bajo/Medio)", 
+                                        children: [
+                                            { 
+                                                name: "¿Historial crediticio es Malo?", 
+                                                children: [ 
+                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }, 
+                                                    { 
+                                                        name: "Respuesta: NO", 
+                                                        children: [
+                                                            { 
+                                                                name: "¿Nivel de deuda < 20%?", 
+                                                                children: [ 
+                                                                    { name: "Respuesta: SÍ", children: [{ name: "Resultado: CRÉDITO APROBADO" }] }, 
+                                                                    { name: "Respuesta: NO", children: [{ name: "Resultado: CRÉDITO RECHAZADO" }] }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 },
                 
                 initChart() {
@@ -146,7 +331,7 @@
                     this.drawTree();
                 },
 
-                // 3. Reescribimos la función drawTree usando ECharts
+                // Modificación clave: Cambiamos orient: 'LR' a orient: 'TB' para orientación vertical
                 drawTree() {
                     if (!this.chartInstance) return;
 
@@ -167,24 +352,24 @@
                                 top: '5%',
                                 bottom: '5%',
                                 layout: 'orthogonal',
-                                orient: 'LR', // De izquierda a derecha (Left to Right)
+                                orient: 'TB', // Cambio clave: de 'LR' (horizontal) a 'TB' (vertical)
                                 symbol: 'circle',
                                 symbolSize: 12,
                                 initialTreeDepth: 2, // Profundidad inicial expandida
 
                                 label: {
-                                    position: 'left',
+                                    position: 'top',
                                     verticalAlign: 'middle',
-                                    align: 'right',
+                                    align: 'center',
                                     fontSize: 14,
                                     color: colors.text
                                 },
 
                                 leaves: {
                                     label: {
-                                        position: 'right',
+                                        position: 'bottom',
                                         verticalAlign: 'middle',
-                                        align: 'left',
+                                        align: 'center',
                                         color: colors.leaf,
                                         fontWeight: 'bold'
                                     }
@@ -206,6 +391,11 @@
                     };
                     
                     this.chartInstance.setOption(option);
+                    
+                    // Ajustar automáticamente el tamaño si es necesario
+                    window.addEventListener('resize', () => {
+                        this.chartInstance.resize();
+                    });
                 }
             }
         }

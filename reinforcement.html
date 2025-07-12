@@ -9,6 +9,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
         .section-container { transition: all 0.5s ease-in-out; }
         .flip-card { perspective: 1000px; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s; transform-style: preserve-3d; }
@@ -22,73 +28,132 @@
         .maze-cell {
             width: 60px; height: 60px; /* Celdas más grandes */
             border: 1px solid #374151; /* gray-700 */
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 1.5rem;
             transition: background-color 0.3s;
             position: relative;
         }
-        .cell-value { font-size: 1rem; font-weight: bold; color: white; }
-        .cell-policy { font-size: 2rem; position: absolute; opacity: 0.75; }
+        .cell-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cell-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .cell-value {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            z-index: 2;
+        }
+        .cell-policy {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 1.5rem;
+            z-index: 2;
+        }
         pre { background-color: #1e293b; color: #e2e8f0; padding: 1.5rem; border-radius: 0.75rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; }
         .token-keyword { color: #f472b6; } .token-function { color: #60a5fa; } .token-string { color: #a3e635; } .token-comment { color: #6b7280; } .token-number { color: #facc15; }
+        
+        /* Estilo para el título principal */
+        .rl-title {
+            line-height: 1.1;
+            padding: 1rem 0;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+            animation: pulseGradient 6s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
     </style>
 </head>
 
 <body class="bg-slate-900 text-slate-300 font-sans" x-data="rlApp()">
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <section class="min-h-[80vh] flex flex-col justify-center text-center">
-            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400 mb-6">Aprendizaje por Refuerzo</h1>
-            <p class="text-xl text-slate-400 mb-12 max-w-3xl mx-auto">Descubre cómo las máquinas aprenden a tomar decisiones a través de la prueba y el error, buscando siempre la máxima recompensa.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-purple-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><h3 class="text-2xl font-bold text-white">Agente</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-purple-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Agente</h3><p class="text-purple-100">Es quien aprende y toma decisiones. Piensa en él como el jugador o el robot que explora el mundo.</p></div></div></div>
-                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-sky-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.881 4.002l.028.028a2 2 0 01-2.828 2.828l-.028-.028a2 2 0 012.828-2.828zM12 18a2 2 0 100-4 2 2 0 000 4z" /></svg><h3 class="text-2xl font-bold text-white">Entorno</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-sky-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Entorno</h3><p class="text-sky-100">Es el "mundo" con el que el agente interactúa. Contiene los estados, las reglas y los desafíos.</p></div></div></div>
-                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-amber-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-amber-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m12-3a9 9 0 11-18 0 9 9 0 0118 0zM12 8v4l3 3" /></svg><h3 class="text-2xl font-bold text-white">Recompensa</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-amber-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Recompensa</h3><p class="text-amber-100">Una señal (positiva o negativa) que el entorno le da al agente. Es el feedback que le indica si una acción fue buena o mala.</p></div></div></div>
-                <div class="flip-card h-72"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 3l6-3" /></svg><h3 class="text-2xl font-bold text-white">Política</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-emerald-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Política</h3><p class="text-emerald-100">La estrategia o "cerebro" del agente. Es un mapa que le dice cuál es la mejor acción a tomar en cada estado.</p></div></div></div>
+        <!-- Sección del título mejorada -->
+        <section class="flex flex-col justify-center text-center py-10 md:py-16">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold rl-title text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+                Aprendizaje por Refuerzo
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-400 mt-4 mb-8 max-w-3xl mx-auto">
+                Descubre cómo las máquinas aprenden a tomar decisiones a través de la prueba y el error, buscando siempre la máxima recompensa.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-purple-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><h3 class="text-2xl font-bold text-white">Agente</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-purple-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Agente</h3><p class="text-purple-100">Es quien aprende y toma decisiones. Piensa en él como el jugador o el robot que explora el mundo.</p></div></div></div>
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-sky-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-sky-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.881 4.002l.028.028a2 2 0 01-2.828 2.828l-.028-.028a2 2 0 012.828-2.828zM12 18a2 2 0 100-4 2 2 0 000 4z" /></svg><h3 class="text-2xl font-bold text-white">Entorno</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-sky-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Entorno</h3><p class="text-sky-100">Es el "mundo" con el que el agente interactúa. Contiene los estados, las reglas y los desafíos.</p></div></div></div>
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-amber-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-amber-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m12-3a9 9 0 11-18 0 9 9 0 0118 0zM12 8v4l3 3" /></svg><h3 class="text-2xl font-bold text-white">Recompensa</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-amber-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Recompensa</h3><p class="text-amber-100">Una señal (positiva o negativa) que el entorno le da al agente. Es el feedback que le indica si una acción fue buena o mala.</p></div></div></div>
+                <div class="flip-card h-64"><div class="flip-card-inner shadow-2xl shadow-emerald-900/50"><div class="flip-card-front bg-slate-800 p-6"><svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 3l6-3" /></svg><h3 class="text-2xl font-bold text-white">Política</h3><p class="text-slate-400 mt-2">(Pasa el cursor)</p></div><div class="flip-card-back bg-emerald-900 p-6"><h3 class="text-2xl font-bold text-white mb-2">Política</h3><p class="text-emerald-100">La estrategia o "cerebro" del agente. Es un mapa que le dice cuál es la mejor acción a tomar en cada estado.</p></div></div></div>
             </div>
         </section>
 
-        <section class="text-center py-16">
+        <section class="text-center py-10 md:py-16">
             <div class="flex flex-col md:flex-row justify-center items-center gap-6">
-                <button @click="showSection('visualization')" class="flex items-center gap-3 bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">¡Visualizar un entorno!</button>
-                <button @click="showSection('code')" class="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">¡Fragmento de código!</button>
+                <button @click="showSection('visualization')" class="flex items-center gap-3 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg">¡Visualizar un entorno!</button>
+                <button @click="showSection('code')" class="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg">¡Fragmento de código!</button>
             </div>
         </section>
         
         <div x-show="visibleSection === 'visualization'" x-transition class="section-container">
-            <section class="py-12">
-                <h2 class="text-4xl font-bold mb-4 text-center">Visualizando el Valor y la Política</h2>
-                <p class="text-slate-400 mb-8 text-center max-w-3xl mx-auto" x-text="stepDescription()"></p>
+            <section class="py-8 md:py-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center">Visualizando el Valor y la Política</h2>
+                <p class="text-slate-400 mb-6 md:mb-8 text-center max-w-3xl mx-auto" x-text="stepDescription()"></p>
                 
-                <div class="grid md:grid-cols-3 gap-8 items-start">
-                    <div class="md:col-span-1 bg-slate-800 p-6 rounded-lg shadow-lg">
-                        <h3 class="text-2xl font-bold mb-4">Proceso de Aprendizaje</h3>
+                <div class="grid md:grid-cols-3 gap-6 items-start">
+                    <div class="md:col-span-1 bg-slate-800 p-4 md:p-6 rounded-lg shadow-lg">
+                        <h3 class="text-xl md:text-2xl font-bold mb-4">Proceso de Aprendizaje</h3>
                         <div class="space-y-4">
-                            <div class="p-4 rounded-lg" :class="step === 0 ? 'bg-purple-500/30 border-purple-400 border' : 'opacity-50'">
+                            <div class="p-3 md:p-4 rounded-lg" :class="step === 0 ? 'bg-purple-500/30 border-purple-400 border' : 'opacity-50'">
                                 <h4 class="font-bold text-white">Paso 1: Calcular Valores</h4>
                                 <p class="text-sm text-slate-300">Descubre qué tan "valiosa" es cada casilla en función de su cercanía a la recompensa (⭐) o al peligro (🔥).</p>
                             </div>
-                             <div class="p-4 rounded-lg" :class="step === 1 ? 'bg-purple-500/30 border-purple-400 border' : 'opacity-50'">
+                             <div class="p-3 md:p-4 rounded-lg" :class="step === 1 ? 'bg-purple-500/30 border-purple-400 border' : 'opacity-50'">
                                 <h4 class="font-bold text-white">Paso 2: Encontrar la Política</h4>
                                 <p class="text-sm text-slate-300">Una vez conocidos los valores, se determina la mejor ruta (política →), moviéndose siempre hacia la casilla de mayor valor.</p>
                             </div>
                         </div>
                         <div class="mt-6">
-                            <button @click="nextStep()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg text-lg" x-text="buttonText()"></button>
+                            <button @click="nextStep()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg text-base md:text-lg" x-text="buttonText()"></button>
                         </div>
                     </div>
 
-                    <div class="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-lg flex justify-center">
+                    <div class="md:col-span-2 bg-slate-800 p-4 md:p-6 rounded-lg shadow-lg flex justify-center">
                         <div class="grid grid-cols-5 gap-0">
                             <template x-for="(row, y) in maze" :key="y">
                                 <template x-for="(cell, x) in row" :key="x">
                                     <div class="maze-cell" :style="getCellStyle(valueGrid[y][x])">
-                                        <span x-show="cell === 1">🧱</span>
-                                        <span x-show="cell === 10">⭐</span>
-                                        <span x-show="cell === -10">🔥</span>
-                                        <div x-show="step > 0 && cell === 0" class="cell-value" x-text="valueGrid[y][x].toFixed(1)"></div>
-                                        <div x-show="step === 2 && cell === 0" class="cell-policy" x-text="policyGrid[y][x]"></div>
+                                        <div class="cell-content">
+                                            <!-- Íconos principales (muro, estrella, fuego) -->
+                                            <span x-show="cell === 1" class="cell-icon">🧱</span>
+                                            <span x-show="cell === 10" class="cell-icon">⭐</span>
+                                            <span x-show="cell === -10" class="cell-icon">🔥</span>
+                                            
+                                            <!-- Valor numérico (esquina superior izquierda) -->
+                                            <div x-show="step > 0 && cell === 0" class="cell-value" x-text="valueGrid[y][x].toFixed(1)"></div>
+                                            
+                                            <!-- Flecha de política (esquina inferior derecha) -->
+                                            <div x-show="step === 2 && cell === 0" class="cell-policy" x-text="policyGrid[y][x]"></div>
+                                        </div>
                                     </div>
                                 </template>
                             </template>
@@ -99,12 +164,12 @@
         </div>
 
         <div x-show="visibleSection === 'code'" x-transition class="section-container">
-             <section class="py-12">
-                <h2 class="text-4xl font-bold mb-4 text-center">Ejemplo de Código en Python</h2>
-                <p class="text-slate-400 mb-8 text-center max-w-3xl mx-auto">
+             <section class="py-8 md:py-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center">Ejemplo de Código en Python</h2>
+                <p class="text-slate-400 mb-6 md:mb-8 text-center max-w-3xl mx-auto">
                     Este es un ejemplo simplificado de Q-Learning usando la biblioteca <span class="font-bold text-white">Gymnasium</span> para resolver el entorno clásico "FrozenLake".
                 </p>
-                <pre><code class="language-python"><span class="token-keyword">import</span> gymnasium <span class="token-keyword">as</span> gym
+                <pre class="text-xs md:text-sm"><code class="language-python"><span class="token-keyword">import</span> gymnasium <span class="token-keyword">as</span> gym
 <span class="token-keyword">import</span> numpy <span class="token-keyword">as</span> np
 
 <span class="token-comment"># 1. Crear el entorno</span>
@@ -160,12 +225,12 @@ env.<span class="token-function">close</span>()</code></pre>
         </div>
     </div>
     
-    <footer class="bg-slate-900/50 border-t border-slate-800 mt-20 py-12">
+    <footer class="bg-slate-900/50 border-t border-slate-800 mt-12 md:mt-20 py-8 md:py-12">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-2xl font-bold text-white mb-6">Explora otras áreas</h3>
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <a href="arbolesdecision.html" class="w-full sm:w-auto inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">¡Volver a los Árboles!</a>
-                <a href="conclusiones.html" class="w-full sm:w-auto inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Conclusiones y Comparativa</a>
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Explora otras áreas</h3>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-3 md:gap-4">
+                <a href="arbolesdecision.html" class="w-full sm:w-auto inline-block bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg transition-colors text-sm md:text-base">¡Volver a los Árboles!</a>
+                <a href="conclusiones.html" class="w-full sm:w-auto inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg transition-colors text-sm md:text-base">Conclusiones y Comparativa</a>
             </div>
         </div>
     </footer>
@@ -246,22 +311,39 @@ env.<span class="token-function">close</span>()</code></pre>
                 },
                 
                 calculatePolicy() {
-                    const arrows = {'-1,0':'↑', '1,0':'↓', '0,-1':'←', '0,1':'→'};
+                    const directions = [
+                        { dy: 1, dx: 0, symbol: '↑', priority: 0 },  // Abajo (máxima prioridad)
+                        { dy: 0, dx: 1, symbol: '→', priority: 1 },   // Derecha
+                        { dy: 0, dx: -1, symbol: '←', priority: 2 },  // Izquierda
+                        { dy: -1, dx: 0, symbol: '↓', priority: 3 }   // Arriba
+                    ];
+
                     for (let y = 0; y < 5; y++) {
                         for (let x = 0; x < 5; x++) {
-                             if (this.maze[y][x] !== 0) continue;
-                             let bestVal = -Infinity;
-                             let bestMove = '';
-                             const neighbors = [[y-1,x], [y+1,x], [y,x-1], [y,x+1]];
-                             for (const [ny, nx] of neighbors) {
-                                 if (ny >= 0 && ny < 5 && nx >= 0 && nx < 5 && this.maze[ny][nx] !== 1) {
-                                     if(this.valueGrid[ny][nx] > bestVal) {
-                                         bestVal = this.valueGrid[ny][nx];
-                                         bestMove = `${ny-y},${nx-x}`;
-                                     }
-                                 }
-                             }
-                             this.policyGrid[y][x] = arrows[bestMove] || '';
+                            if (this.maze[y][x] !== 0) {
+                                this.policyGrid[y][x] = '';
+                                continue;
+                            }
+                            
+                            let bestValue = -Infinity;
+                            let bestDirection = null;
+                            
+                            for (const dir of directions) {
+                                const ny = y + dir.dy;
+                                const nx = x + dir.dx;
+                                
+                                if (ny >= 0 && ny < 5 && nx >= 0 && nx < 5 && 
+                                    this.maze[ny][nx] !== 1) {
+                                    
+                                    const currentValue = this.valueGrid[ny][nx];
+                                    if (currentValue > bestValue) {
+                                        bestValue = currentValue;
+                                        bestDirection = dir;
+                                    }
+                                }
+                            }
+                            
+                            this.policyGrid[y][x] = bestDirection ? bestDirection.symbol : '';
                         }
                     }
                 },
